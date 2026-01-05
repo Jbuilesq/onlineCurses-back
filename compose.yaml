@@ -1,0 +1,7 @@
+﻿services:
+  onlinecurses.api:
+    image: onlinecurses.api
+    build:
+      context: .
+      dockerfile: onlineCurses.Api/Dockerfile
+
