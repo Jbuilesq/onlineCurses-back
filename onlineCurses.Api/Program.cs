@@ -55,6 +55,18 @@
                 IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]!))
             };
         });
+    // CORS - Permite que el frontend React (puerto 5173) acceda a la API
+    builder.Services.AddCors(options =>
+    {
+        options.AddPolicy("AllowReactFrontend", policy =>
+        {
+            policy.WithOrigins("http://localhost:5173")   // Puerto de Vite/React
+                .AllowAnyMethod()
+                .AllowAnyHeader()
+                .AllowCredentials(); // Importante para cookies/JWT si usas credenciales
+        });
+    });
+    
 
     // DI
     builder.Services.AddScoped<ICourseRepository, CourseRepository>();
@@ -72,7 +84,10 @@
         db.Database.Migrate();
         await DataSeeder.SeedAsync(db);
     }
-
+    
+    // CORS - 
+    app.UseCors("AllowReactFrontend");
+    
     if (app.Environment.IsDevelopment())
     {
         app.UseSwagger();
